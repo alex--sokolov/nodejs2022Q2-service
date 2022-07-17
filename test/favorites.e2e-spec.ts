@@ -136,7 +136,7 @@ describe('Favorites (e2e)', () => {
         name: createArtistDto.name,
         grammy: createArtistDto.grammy,
       });
-      console.log('body', response.body.artists);
+
       expect(response.body.albums).toContainEqual({
         id: albumId,
         name: createAlbumDto.name,
@@ -155,15 +155,13 @@ describe('Favorites (e2e)', () => {
       const deleteArtistResponse = await unauthorizedRequest
         .delete(artistsRoutes.delete(artistId))
         .set(commonHeaders);
-      console.log('artistId', artistId);
-      console.log('deleteArtistResponse.status', deleteArtistResponse.status);
+
       expect(deleteArtistResponse.status).toBe(StatusCodes.NO_CONTENT);
 
       const deleteAlbumResponse = await unauthorizedRequest
         .delete(albumsRoutes.delete(albumId))
         .set(commonHeaders);
-      console.log('albumId', artistId);
-      console.log('deleteAlbumResponse.status', deleteArtistResponse.status);
+
       expect(deleteAlbumResponse.status).toBe(StatusCodes.NO_CONTENT);
 
       const deleteTrackResponse = await unauthorizedRequest
