@@ -1,5 +1,5 @@
 # Home Library Service
-
+NestJS, REST API
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -8,7 +8,13 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/alex--sokolov/nodejs2022Q2-service
+```
+
+## Change branch
+
+```
+git checkout develop
 ```
 
 ## Installing NPM modules
@@ -64,6 +70,11 @@ npm run lint
 ```
 npm run format
 ```
+
+### Change port
+
+You can also change port.
+Rename .env-example to .env and set PORT inside it.
 
 ### Debugging in VSCode
 
