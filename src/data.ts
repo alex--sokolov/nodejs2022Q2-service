@@ -1,13 +1,13 @@
-import { Album, Artist, Favourites, Track, User } from './interfaces';
+import { Album, Artist, Favorites, Track, User } from './interfaces';
 
 export const data = {
   users: <User[]>[],
   artists: <Artist[]>[],
   tracks: <Track[]>[],
   albums: <Album[]>[],
-  favourites: <Favourites>{
+  favorites: <Favorites>{
     artists: <string[]>[],
     albums: <string[]>[],
-    tracks: <string[]>[]
+    tracks: <string[]>[],
   },
 };

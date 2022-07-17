@@ -12,7 +12,8 @@ import { v4 } from 'uuid';
 import { albumErrors } from './albums.errors';
 import { ArtistsService } from '../artists/artists.service';
 import { TracksService } from '../tracks/tracks.service';
-import {FavouritesService} from "../favourites/favourites.service";
+import { FavoritesService } from '../favorites/favorites.service';
+import { artistErrors } from '../artists/artists.errors';
 
 @Injectable()
 export class AlbumsService {
@@ -21,8 +22,8 @@ export class AlbumsService {
     private readonly artistsService: ArtistsService,
     @Inject(forwardRef(() => TracksService))
     private readonly tracksService: TracksService,
-    @Inject(forwardRef(() => FavouritesService))
-    private readonly favouritesService: FavouritesService,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(): Promise<Album[]> {
@@ -57,11 +58,7 @@ export class AlbumsService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
-    // console.log('id', id);
     const album = await this.findOne(id);
-
-    // console.log('album to update: ', album);
-    // console.log('new data for update: ', updateAlbumDto);
 
     if (!album) {
       throw new NotFoundException(albumErrors.NOT_FOUND);
@@ -86,25 +83,29 @@ export class AlbumsService {
 
   async remove(id: string): Promise<void> {
     await new Promise((resolve) => {
-      const newAlbums: Album[] = data.albums.filter((album) => album.id !== id);
-      if (newAlbums.length === data.albums.length) {
-        throw new NotFoundException(albumErrors.NOT_FOUND);
+      const a = data.favorites.albums.indexOf(id);
+      if (a >= 0) {
+        data.favorites.albums.splice(a, 1);
       }
-      data.albums = newAlbums;
+      resolve(true);
+    });
+
+    const albums = await this.findAll();
+    const albumToRemove = await this.findOne(id);
+    if (!albumToRemove) {
+      throw new NotFoundException(artistErrors.NOT_FOUND);
+    }
+    await new Promise((resolve) => {
+      data.albums = albums.filter((album) => album.id !== id);
       resolve(true);
     });
 
     const tracks = await this.tracksService.findAll();
     if (tracks.length > 0) {
       const track = tracks.find((track) => track.albumId === id);
-      await this.tracksService.update(track.id, { albumId: null });
+      if (track) {
+        await this.tracksService.update(track.id, { albumId: null });
+      }
     }
-
-
-    // const fav = await this.favouritesService.findAll();
-    // if (fav.albums.length > 0) {
-    //   const deleted = await this.favouritesService.removeAlbumFromFavourites(id);
-    //   console.log('deleted', deleted);
-    // }
   }
 }

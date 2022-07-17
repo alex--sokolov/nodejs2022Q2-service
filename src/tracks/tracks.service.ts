@@ -12,7 +12,8 @@ import { data } from '../data';
 import { v4 } from 'uuid';
 import { trackErrors } from './tracks.errors';
 import { AlbumsService } from '../albums/albums.service';
-import {FavouritesService} from "../favourites/favourites.service";
+import { FavoritesService } from '../favorites/favorites.service';
+import { artistErrors } from '../artists/artists.errors';
 
 @Injectable()
 export class TracksService {
@@ -21,8 +22,8 @@ export class TracksService {
     private readonly artistsService: ArtistsService,
     @Inject(forwardRef(() => AlbumsService))
     private readonly albumsService: AlbumsService,
-    @Inject(forwardRef(() => FavouritesService))
-    private readonly favouritesService: FavouritesService,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(): Promise<Track[]> {
@@ -59,11 +60,7 @@ export class TracksService {
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
-    console.log('id', id);
     const track = await this.findOne(id);
-
-    console.log('track to update: ', track);
-    console.log('new data for update: ', updateTrackDto);
 
     if (!track) {
       throw new NotFoundException(trackErrors.NOT_FOUND);
@@ -91,23 +88,22 @@ export class TracksService {
   }
 
   async remove(id: string): Promise<void> {
+    const tracks = await this.findAll();
+    const trackToRemove = await this.findOne(id);
+    if (!trackToRemove) {
+      throw new NotFoundException(artistErrors.NOT_FOUND);
+    }
     await new Promise((resolve) => {
-      const newTracks: Track[] = data.tracks.filter((track) => track.id !== id);
-      if (newTracks.length === data.tracks.length) {
-        throw new NotFoundException(trackErrors.NOT_FOUND);
-      }
-      data.tracks = newTracks;
-      // const tracks = await this.trackService.findAll();
-      // const tracks = await this.trackService.findAll();
-      // this.trackService.update(track.id, { ...track, trackId: null });
-
+      data.tracks = tracks.filter((album) => album.id !== id);
       resolve(true);
     });
 
-    const fav = await this.favouritesService.findAll();
-    if (fav.tracks.length > 0) {
-      const deleted = await this.favouritesService.removeArtistFromFavourites(id);
-      console.log('deleted', deleted);
-    }
+    await new Promise((resolve) => {
+      const a = data.favorites.tracks.indexOf(id);
+      if (a >= 0) {
+        data.favorites.tracks.splice(a, 1);
+      }
+      resolve(true);
+    });
   }
 }

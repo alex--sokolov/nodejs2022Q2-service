@@ -3,12 +3,16 @@ import { AppModule } from './app.module';
 import { readFile } from 'fs/promises';
 import { SwaggerModule } from '@nestjs/swagger';
 import { parse } from 'yaml';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
 import { ValidationPipe } from '@nestjs/common';
+import { cwd } from 'process';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: resolve(cwd(), '.env') });
+const port = process.env.PORT || 4000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   const rootDirname = dirname(__dirname);
   const DOC_API = await readFile(join(rootDirname, 'doc', 'api.yaml'), 'utf-8');
   const document = parse(DOC_API);
@@ -19,6 +23,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(4000);
+  await app.listen(port);
 }
 bootstrap();
