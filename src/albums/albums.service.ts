@@ -5,9 +5,14 @@ import {Album} from "../interfaces";
 import {data} from "../data";
 import {v4} from "uuid";
 import {albumErrors} from "./albums.errors";
+import {ArtistsService} from "../artists/artists.service";
 
 @Injectable()
 export class AlbumsService {
+  constructor(private readonly artistsService: ArtistsService) {
+  }
+
+
   async findAll(): Promise<Album[]> {
     return await new Promise((resolve) => {
       resolve(data.albums);
@@ -25,6 +30,10 @@ export class AlbumsService {
   }
 
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    if (createAlbumDto.artistId) {
+      await this.artistsService.findOne(createAlbumDto.artistId)
+    }
+
     return await new Promise((resolve) => {
       const newAlbum = {
         id: v4(),
@@ -47,6 +56,10 @@ export class AlbumsService {
 
     if (!album) {
       throw new NotFoundException(albumErrors.NOT_FOUND);
+    }
+
+    if (updateAlbumDto.artistId) {
+      await this.artistsService.findOne(updateAlbumDto.artistId)
     }
 
     const newAlbum = {

@@ -39,11 +39,8 @@ export class ArtistsService {
       id: string,
       updateArtistDto: UpdateArtistDto,
   ): Promise<Artist> {
-    console.log('id', id);
-    const artist = await this.findOne(id);
 
-    console.log('artist to update: ', artist);
-    console.log('new data for update: ', updateArtistDto);
+    const artist = await this.findOne(id);
 
     if (!artist) {
       throw new NotFoundException(artistErrors.NOT_FOUND);
