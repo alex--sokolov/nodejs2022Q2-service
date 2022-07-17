@@ -3,40 +3,46 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  Delete, ParseUUIDPipe, Put, HttpCode,
 } from '@nestjs/common';
-import { AlbumsService } from './albums.service';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import {AlbumsService} from "../albums/albums.service";
+import {Album} from "../interfaces";
+import {CreateAlbumDto} from "../albums/dto/create-album.dto";
+import {UpdateAlbumDto} from "../albums/dto/update-album.dto";
 
-@Controller('albums')
+@Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
-  @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
-  }
-
   @Get()
-  findAll() {
-    return this.albumsService.findAll();
+  async findAll(): Promise<Album[]> {
+    return await this.albumsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.albumsService.findOne(+id);
+  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): Promise<Album> {
+    return await this.albumsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumsService.update(+id, updateAlbumDto);
+  @Post()
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return await this.albumsService.create(createAlbumDto);
+  }
+
+  @Put(':id')
+  async update(
+      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+      @Body() updateAlbumDto: UpdateAlbumDto,
+  ): Promise<Album> {
+    return await this.albumsService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumsService.remove(+id);
+  @HttpCode(204)
+  async remove(
+      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<boolean> {
+    return await this.albumsService.remove(id);
   }
 }

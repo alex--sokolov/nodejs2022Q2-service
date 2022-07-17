@@ -1,26 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import {Album} from "../interfaces";
+import {data} from "../data";
+import {v4} from "uuid";
+import {albumErrors} from "./albums.errors";
 
 @Injectable()
 export class AlbumsService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  async findAll(): Promise<Album[]> {
+    return await new Promise((resolve) => {
+      resolve(data.albums);
+    });
   }
 
-  findAll() {
-    return `This action returns all albums`;
+  async findOne(id: string): Promise<Album> {
+    const album: Album = await new Promise((resolve) => {
+      resolve(data.albums.find((album) => album.id === id));
+    });
+    if (!album) {
+      throw new NotFoundException(albumErrors.NOT_FOUND);
+    }
+    return album;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return await new Promise((resolve) => {
+      const newAlbum = {
+        id: v4(),
+        ...createAlbumDto
+      };
+      data.albums.push(newAlbum);
+      resolve(newAlbum);
+    });
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  async update(
+      id: string,
+      updateAlbumDto: UpdateAlbumDto,
+  ): Promise<Album> {
+    console.log('id', id);
+    const album = await this.findOne(id);
+
+    console.log('album to update: ', album);
+    console.log('new data for update: ', updateAlbumDto);
+
+    if (!album) {
+      throw new NotFoundException(albumErrors.NOT_FOUND);
+    }
+
+    const newAlbum = {
+      ...album,
+      ...updateAlbumDto
+    };
+
+    return await new Promise((resolve) => {
+      data.albums = data.albums.map((album) => (album.id === id ? newAlbum : album));
+      resolve(newAlbum);
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  async remove(id: string): Promise<boolean> {
+    return await new Promise((resolve) => {
+      const newAlbums: Album[] = data.albums.filter((album) => album.id !== id);
+      if (newAlbums.length === data.albums.length) {
+        throw new NotFoundException(albumErrors.NOT_FOUND);
+      }
+      data.albums = newAlbums;
+      // const albums = await this.albumService.findAll();
+      // const tracks = await this.trackService.findAll();
+      // this.albumService.update(album.id, { ...album, albumId: null });
+
+      resolve(true);
+    });
   }
 }
