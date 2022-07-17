@@ -101,10 +101,10 @@ export class AlbumsService {
     }
 
 
-    const fav = await this.favouritesService.findAll();
-    if (fav.albums.length > 0) {
-      const deleted = await this.favouritesService.removeAlbumFromFavourites(id);
-      console.log('deleted', deleted);
-    }
+    // const fav = await this.favouritesService.findAll();
+    // if (fav.albums.length > 0) {
+    //   const deleted = await this.favouritesService.removeAlbumFromFavourites(id);
+    //   console.log('deleted', deleted);
+    // }
   }
 }

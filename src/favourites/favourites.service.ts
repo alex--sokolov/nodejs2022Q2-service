@@ -66,6 +66,7 @@ export class FavouritesService {
   async addArtistToFavourites(id: string) {
     const artist = await this.artistsService.findOne(id);
     if (!artist) throw new UnprocessableEntityException();
+
     return new Promise((resolve) => {
       data.favourites.artists.push(artist.id);
       resolve(artist);

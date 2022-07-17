@@ -96,11 +96,11 @@ export class ArtistsService {
       await this.tracksService.update(track.id, { artistId: null });
     }
 
-    const fav = await this.favouritesService.findAll();
-    if (fav.artists.length > 0) {
-      const deleted = await this.favouritesService.removeArtistFromFavourites(id);
-      console.log('deleted', deleted);
-    }
+    // const fav = await this.favouritesService.findAll();
+    // if (fav.artists.length > 0) {
+    //   const deleted = await this.favouritesService.removeArtistFromFavourites(id);
+    //   console.log('deleted', deleted);
+    // }
 
   }
 }
