@@ -316,7 +316,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: oldPassowrd is wrong
+          description: oldPassword is wrong
         404:
           description: User not found
 

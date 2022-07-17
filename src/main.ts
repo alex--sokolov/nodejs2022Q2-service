@@ -13,7 +13,15 @@ async function bootstrap() {
   const DOC_API = await readFile(join(rootDirname, 'doc', 'api.yaml'), 'utf-8');
   const document = parse(DOC_API);
   SwaggerModule.setup('doc', app, document);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        }
+      }),
+  );
   await app.listen(4000);
 }
 bootstrap();
