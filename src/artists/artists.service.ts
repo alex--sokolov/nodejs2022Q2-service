@@ -1,13 +1,25 @@
-import { Injectable, NotFoundException} from '@nestjs/common';
+import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import {Artist} from "../interfaces";
 import {data} from "../data";
 import {artistErrors} from "./artists.errors";
 import {v4} from "uuid";
+import {TracksService} from "../tracks/tracks.service";
+import {AlbumsService} from "../albums/albums.service";
 
 @Injectable()
+
 export class ArtistsService {
+
+  constructor(
+      @Inject(forwardRef(() => AlbumsService))
+      private readonly albumsService: AlbumsService,
+      @Inject(forwardRef(() => TracksService))
+      private readonly tracksService: TracksService,
+  ) {
+  }
+
   async findAll(): Promise<Artist[]> {
     return await new Promise((resolve) => {
       resolve(data.artists);
@@ -57,18 +69,30 @@ export class ArtistsService {
     });
   }
 
-  async remove(id: string): Promise<boolean> {
-    return await new Promise((resolve) => {
+  async remove(id: string): Promise<void> {
+    await new Promise((resolve) => {
       const newArtists: Artist[] = data.artists.filter((artist) => artist.id !== id);
       if (newArtists.length === data.artists.length) {
         throw new NotFoundException(artistErrors.NOT_FOUND);
       }
       data.artists = newArtists;
-      // const albums = await this.albumService.findAll();
-      // const tracks = await this.trackService.findAll();
-      // this.albumService.update(album.id, { ...album, artistId: null });
-
       resolve(true);
     });
+
+
+    const albums = await this.albumsService.findAll();
+    if (albums.length > 0) {
+      const album = albums.find(album => album.artistId === id);
+      await this.albumsService.update(album.id, { artistId: null });
+    }
+
+
+    const tracks = await this.tracksService.findAll();
+    if (tracks.length > 0) {
+      const track = tracks.find(track => track.artistId === id);
+      await this.tracksService.update(track.id, { artistId: null });
+    }
+
+
   }
 }
