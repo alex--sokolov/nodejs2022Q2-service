@@ -1,3 +1,3 @@
 export const trackErrors = {
-    NOT_FOUND: 'Track not found',
+  NOT_FOUND: 'Track not found',
 };

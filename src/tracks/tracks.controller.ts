@@ -4,12 +4,15 @@ import {
   Post,
   Body,
   Param,
-  Delete, ParseUUIDPipe, Put, HttpCode,
+  Delete,
+  ParseUUIDPipe,
+  Put,
+  HttpCode,
 } from '@nestjs/common';
-import {TracksService} from "./tracks.service";
-import {Track} from "../interfaces";
-import {CreateTrackDto} from "./dto/create-track.dto";
-import {UpdateTrackDto} from "./dto/update-track.dto";
+import { TracksService } from './tracks.service';
+import { Track } from '../interfaces';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Controller('track')
 export class TracksController {
@@ -21,7 +24,9 @@ export class TracksController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): Promise<Track> {
+  async findOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Track> {
     return await this.tracksService.findOne(id);
   }
 
@@ -32,8 +37,8 @@ export class TracksController {
 
   @Put(':id')
   async update(
-      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-      @Body() updateTrackDto: UpdateTrackDto,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
   ): Promise<Track> {
     return await this.tracksService.update(id, updateTrackDto);
   }
@@ -41,8 +46,8 @@ export class TracksController {
   @Delete(':id')
   @HttpCode(204)
   async remove(
-      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<boolean> {
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<void> {
     return await this.tracksService.remove(id);
   }
 }

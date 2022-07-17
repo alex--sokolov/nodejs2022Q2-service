@@ -12,7 +12,7 @@ import {
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import {Artist} from "../interfaces";
+import { Artist } from '../interfaces';
 
 @Controller('artist')
 export class ArtistsController {
@@ -24,7 +24,9 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): Promise<Artist> {
+  async findOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Artist> {
     return await this.artistsService.findOne(id);
   }
 
@@ -35,8 +37,8 @@ export class ArtistsController {
 
   @Put(':id')
   async update(
-      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-      @Body() updateArtistDto: UpdateArtistDto,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
   ): Promise<Artist> {
     return await this.artistsService.update(id, updateArtistDto);
   }
@@ -44,7 +46,7 @@ export class ArtistsController {
   @Delete(':id')
   @HttpCode(204)
   async remove(
-      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<void> {
     return await this.artistsService.remove(id);
   }

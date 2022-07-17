@@ -28,7 +28,7 @@ export interface Album {
   artistId: string | null; // refers to Artist
 }
 
-export interface Favorites {
+export interface Favourites {
   artists: string[]; // favorite artists ids
   albums: string[]; // favorite albums ids
   tracks: string[]; // favorite tracks ids

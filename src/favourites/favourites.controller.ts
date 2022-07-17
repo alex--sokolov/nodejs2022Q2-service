@@ -2,44 +2,57 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  Delete, ParseUUIDPipe, HttpCode,
 } from '@nestjs/common';
 import { FavouritesService } from './favourites.service';
-import { CreateFavouriteDto } from './dto/create-favourite.dto';
-import { UpdateFavouriteDto } from './dto/update-favourite.dto';
 
-@Controller('favourites')
+@Controller('favs')
 export class FavouritesController {
   constructor(private readonly favouritesService: FavouritesService) {}
-
-  @Post()
-  create(@Body() createFavouriteDto: CreateFavouriteDto) {
-    return this.favouritesService.create(createFavouriteDto);
-  }
 
   @Get()
   findAll() {
     return this.favouritesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favouritesService.findOne(+id);
+  @Post('artist/:id')
+  addArtistToFavourites(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.favouritesService.addArtistToFavourites(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateFavouriteDto: UpdateFavouriteDto,
+  @Delete('artist/:id')
+  @HttpCode(204)
+  removeArtistFromFavourites(
+      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
-    return this.favouritesService.update(+id, updateFavouriteDto);
+    return this.favouritesService.removeArtistFromFavourites(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favouritesService.remove(+id);
+  @Post('album/:id')
+  addAlbumToFavourites(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.favouritesService.addAlbumToFavourites(id);
   }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  removeAlbumFromFavourites(
+      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favouritesService.removeAlbumFromFavourites(id);
+  }
+
+  @Post('track/:id')
+  addTrackToFavourites(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.favouritesService.addTrackToFavourites(id);
+  }
+
+  @Delete('track/:id')
+  @HttpCode(204)
+  removeTrackFromFavourites(
+      @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favouritesService.removeTrackFromFavourites(id);
+  }
+
 }

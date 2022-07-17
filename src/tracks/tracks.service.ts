@@ -1,22 +1,29 @@
-import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import {ArtistsService} from "../artists/artists.service";
-import {Track} from "../interfaces";
-import {data} from "../data";
-import {v4} from "uuid";
-import {trackErrors} from "./tracks.errors";
-import {AlbumsService} from "../albums/albums.service";
+import { ArtistsService } from '../artists/artists.service';
+import { Track } from '../interfaces';
+import { data } from '../data';
+import { v4 } from 'uuid';
+import { trackErrors } from './tracks.errors';
+import { AlbumsService } from '../albums/albums.service';
+import {FavouritesService} from "../favourites/favourites.service";
 
 @Injectable()
 export class TracksService {
   constructor(
-      @Inject(forwardRef(() => ArtistsService))
-      private readonly artistsService: ArtistsService,
-      @Inject(forwardRef(() => AlbumsService))
-      private readonly albumsService: AlbumsService,
-  ) {
-  }
+    @Inject(forwardRef(() => ArtistsService))
+    private readonly artistsService: ArtistsService,
+    @Inject(forwardRef(() => AlbumsService))
+    private readonly albumsService: AlbumsService,
+    @Inject(forwardRef(() => FavouritesService))
+    private readonly favouritesService: FavouritesService,
+  ) {}
 
   async findAll(): Promise<Track[]> {
     return await new Promise((resolve) => {
@@ -36,25 +43,22 @@ export class TracksService {
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     if (createTrackDto.artistId) {
-      await this.artistsService.findOne(createTrackDto.artistId)
+      await this.artistsService.findOne(createTrackDto.artistId);
     }
     if (createTrackDto.albumId) {
-      await this.albumsService.findOne(createTrackDto.albumId)
+      await this.albumsService.findOne(createTrackDto.albumId);
     }
     return await new Promise((resolve) => {
       const newTrack = {
         id: v4(),
-        ...createTrackDto
+        ...createTrackDto,
       };
       data.tracks.push(newTrack);
       resolve(newTrack);
     });
   }
 
-  async update(
-      id: string,
-      updateTrackDto: UpdateTrackDto,
-  ): Promise<Track> {
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
     console.log('id', id);
     const track = await this.findOne(id);
 
@@ -66,26 +70,28 @@ export class TracksService {
     }
 
     if (updateTrackDto.artistId) {
-      await this.artistsService.findOne(updateTrackDto.artistId)
+      await this.artistsService.findOne(updateTrackDto.artistId);
     }
 
     if (updateTrackDto.albumId) {
-      await this.albumsService.findOne(updateTrackDto.albumId)
+      await this.albumsService.findOne(updateTrackDto.albumId);
     }
 
     const newTrack = {
       ...track,
-      ...updateTrackDto
+      ...updateTrackDto,
     };
 
     return await new Promise((resolve) => {
-      data.tracks = data.tracks.map((track) => (track.id === id ? newTrack : track));
+      data.tracks = data.tracks.map((track) =>
+        track.id === id ? newTrack : track,
+      );
       resolve(newTrack);
     });
   }
 
-  async remove(id: string): Promise<boolean> {
-    return await new Promise((resolve) => {
+  async remove(id: string): Promise<void> {
+    await new Promise((resolve) => {
       const newTracks: Track[] = data.tracks.filter((track) => track.id !== id);
       if (newTracks.length === data.tracks.length) {
         throw new NotFoundException(trackErrors.NOT_FOUND);
@@ -97,5 +103,11 @@ export class TracksService {
 
       resolve(true);
     });
+
+    const fav = await this.favouritesService.findAll();
+    if (fav.tracks.length > 0) {
+      const deleted = await this.favouritesService.removeArtistFromFavourites(id);
+      console.log('deleted', deleted);
+    }
   }
 }
