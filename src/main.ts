@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {readFile} from "fs/promises";
+import { readFile } from 'fs/promises';
 import { SwaggerModule } from '@nestjs/swagger';
 import { parse } from 'yaml';
 import { dirname, join } from 'path';
-import {ValidationPipe} from "@nestjs/common";
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,13 +14,10 @@ async function bootstrap() {
   const document = parse(DOC_API);
   SwaggerModule.setup('doc', app, document);
   app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        }
-      }),
+    new ValidationPipe({
+      whitelist: true,
+      transform: true
+    }),
   );
   await app.listen(4000);
 }
