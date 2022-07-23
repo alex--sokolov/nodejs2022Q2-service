@@ -23,12 +23,6 @@ cd nodejs2022Q2-service
 git checkout docker
 ```
 
-## Installing NPM modules
-
-```bash
-npm install
-```
-
 ## Docker
 
 Build images and start containers:
