@@ -40,7 +40,8 @@
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.5.0",
     "uuid": "^8.3.2",
-    "yaml": "^2.1.1"
+    "yaml": "^2.1.1",
+    "@prisma/client": "^4.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -61,6 +62,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.2.5",
     "prettier": "^2.3.2",
+    "prisma": "^4.1.0",
     "source-map-support": "^0.5.20",
     "supertest": "^6.2.3",
     "ts-jest": "^27.0.3",

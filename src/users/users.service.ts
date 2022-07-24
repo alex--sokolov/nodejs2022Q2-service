@@ -3,6 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
+// import {User} from '@prisma/client'
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { data } from './../data';
@@ -15,6 +18,7 @@ import { userErrors } from './users.errors';
 export class UsersService {
   async findAll(): Promise<UserResponseDto[]> {
     const users: User[] = await new Promise((resolve) => {
+
       resolve(data.users);
     });
     return users.map((user) => new UserResponseDto(user));
