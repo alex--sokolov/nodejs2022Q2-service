@@ -7,26 +7,40 @@ NestJS, REST API
 
 ## Downloading
 
-```
+```bash
 git clone https://github.com/alex--sokolov/nodejs2022Q2-service
+```
+
+## Open task folder 
+
+```bash
+cd nodejs2022Q2-service
 ```
 
 ## Change branch
 
-```
-git checkout develop
-```
-
-## Installing NPM modules
-
-```
-npm install
+```bash
+git checkout docker
 ```
 
-## Running application
+## Docker
 
+Build images and start containers:
+
+```bash
+npm run docker:start
 ```
-npm start
+
+Scan app image for vulnerabilities:
+
+```bash
+npm run docker:scan
+```
+
+Scan postgres image for vulnerabilities:
+
+```bash
+npm run docker:scandb
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -39,35 +53,35 @@ After application running open new terminal and enter:
 
 To run all tests without authorization
 
-```
+```bash
 npm run test
 ```
 
 To run only one of all test suites
 
-```
+```bash
 npm run test -- <path to suite>
 ```
 
 To run all test with authorization
 
-```
+```bash
 npm run test:auth
 ```
 
 To run only specific test suite with authorization
 
-```
+```bash
 npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format
 
-```
+```bash
 npm run lint
 ```
 
-```
+```bash
 npm run format
 ```
 
