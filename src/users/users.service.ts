@@ -26,7 +26,7 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findFirst({where: {id}});
       if (!user) {
-        throw new NotFoundException('There is no user with specified id');
+        throw new NotFoundException(userErrors.NOT_FOUND);
       }
       return new UserResponseDto(user);
     } catch (error) {
@@ -49,7 +49,6 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    // Find user by id
     try {
       const user = await this.prisma.user.findFirst({where: {id}});
       if (!user) {

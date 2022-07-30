@@ -9,10 +9,12 @@ import { AlbumsService } from '../albums/albums.service';
 import { TracksService } from '../tracks/tracks.service';
 import { data } from '../data';
 import { Favorites } from '../interfaces';
+import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
 export class FavoritesService {
   constructor(
+    private prisma: PrismaService,
     @Inject(forwardRef(() => ArtistsService))
     private artistsService: ArtistsService,
     @Inject(forwardRef(() => AlbumsService))
@@ -58,12 +60,17 @@ export class FavoritesService {
   }
 
   async removeArtistFromFavorites(id: string): Promise<void> {
-    const artist = data.artists.find((artist) => artist.id === id);
-    if (!artist) throw new UnprocessableEntityException();
-    await new Promise((resolve) => {
-      data.favorites.artists.splice(data.favorites.artists.indexOf(id), 1);
-      resolve(true);
+    this.prisma.artist.update({
+      where: { id },
+      data: { favoriteId: { set: null } },
     });
+
+    // const artist = data.artists.find((artist) => artist.id === id);
+    // if (!artist) throw new UnprocessableEntityException();
+    // await new Promise((resolve) => {
+    //   data.favorites.artists.splice(data.favorites.artists.indexOf(id), 1);
+    //   resolve(true);
+    // });
   }
 
   async addAlbumToFavorites(id: string): Promise<string> {
