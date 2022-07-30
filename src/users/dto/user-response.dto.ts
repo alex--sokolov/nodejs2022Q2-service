@@ -8,10 +8,10 @@ export class UserResponseDto {
   password: string;
   version: number;
 
-  @Transform(({ value }) => new Date(value).getTime())
+  @Transform(({ value }) => Math.floor(new Date(value).getTime() / 100))
   createdAt: Date;
 
-  @Transform(({ value }) => new Date(value).getTime())
+  @Transform(({ value }) => Math.floor(new Date(value).getTime() / 100))
   updatedAt: Date;
 
   constructor(withoutPass: Omit<UserResponseDto, 'password'>) {
