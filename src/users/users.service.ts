@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import {CreateUserDto} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
-import {UserResponseDto} from './dto/user-response.dto';
-import {userErrors} from './users.errors';
-import {PrismaService} from "../prisma/prisma.service";
-import {User} from "@prisma/client";
-import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { userErrors } from './users.errors';
+import { PrismaService } from "../prisma/prisma.service";
+import { User } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 @Injectable()
 export class UsersService {
@@ -19,8 +19,8 @@ export class UsersService {
 
   async findAll(): Promise<UserResponseDto[]> {
     try {
-    const users: User[] = await this.prisma.user.findMany()
-    return users.map((user) => new UserResponseDto(user));
+      const users: User[] = await this.prisma.user.findMany()
+      return users.map((user) => new UserResponseDto(user));
     } catch (error) {
       throw error;
     }
@@ -40,12 +40,12 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     try {
-      const date:Date = new Date();
+      const date: Date = new Date();
       const user = await this.prisma.user.create({
         data: {
           ...createUserDto,
-          createdAt : date,
-          updatedAt : date
+          createdAt: date,
+          updatedAt: date
         }
       });
       return new UserResponseDto(user);

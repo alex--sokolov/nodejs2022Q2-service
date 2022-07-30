@@ -1,15 +1,11 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import {CreateTrackDto} from './dto/create-track.dto';
 import {UpdateTrackDto} from './dto/update-track.dto';
-import {ArtistsService} from '../artists/artists.service';
 import {Track} from '../interfaces';
 import {trackErrors} from './tracks.errors';
-import {AlbumsService} from '../albums/albums.service';
 import {FavoritesService} from '../favorites/favorites.service';
 import {PrismaService} from "../prisma/prisma.service";
 
@@ -17,13 +13,7 @@ import {PrismaService} from "../prisma/prisma.service";
 export class TracksService {
   constructor(
     private prisma: PrismaService,
-    private favorites: FavoritesService,
-    @Inject(forwardRef(() => ArtistsService))
-    private readonly artistsService: ArtistsService,
-    @Inject(forwardRef(() => AlbumsService))
-    private readonly albumsService: AlbumsService,
-    @Inject(forwardRef(() => FavoritesService))
-    private readonly favoritesService: FavoritesService,
+    private favoritesService: FavoritesService,
   ) {
   }
 

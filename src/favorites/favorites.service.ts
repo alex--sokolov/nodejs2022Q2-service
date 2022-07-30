@@ -1,24 +1,10 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import {ArtistsService} from '../artists/artists.service';
-import {AlbumsService} from '../albums/albums.service';
-import {TracksService} from '../tracks/tracks.service';
-import {PrismaService} from "../prisma/prisma.service";
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class FavoritesService {
   constructor(
     private prisma: PrismaService,
-    @Inject(forwardRef(() => ArtistsService))
-    private artistsService: ArtistsService,
-    @Inject(forwardRef(() => AlbumsService))
-    private albumsService: AlbumsService,
-    @Inject(forwardRef(() => TracksService))
-    private tracksService: TracksService,
   ) {
   }
 
@@ -60,8 +46,8 @@ export class FavoritesService {
   }
 
   async addArtistToFavorites(id: string): Promise<string> {
-      const artist = await this.prisma.artist.findFirst({where: {id}});
-      if (!artist) throw new UnprocessableEntityException();
+    const artist = await this.prisma.artist.findFirst({where: {id}});
+    if (!artist) throw new UnprocessableEntityException();
     try {
       const favRecord = await this.prisma.favorite.findFirst() || await this.prisma.favorite.create({data: {}});
       await this.prisma.artist.update({
@@ -112,8 +98,8 @@ export class FavoritesService {
   }
 
   async addTrackToFavorites(id: string): Promise<string> {
-      const track = await this.prisma.track.findFirst({where: {id}});
-      if (!track) throw new UnprocessableEntityException();
+    const track = await this.prisma.track.findFirst({where: {id}});
+    if (!track) throw new UnprocessableEntityException();
     try {
       const favRecord = await this.prisma.favorite.findFirst() || await this.prisma.favorite.create({data: {}});
       await this.prisma.track.update({
