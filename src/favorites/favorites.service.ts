@@ -39,9 +39,9 @@ export class FavoritesService {
     });
 
     return {
-      artists: favRecord.artists || [],
-      albums: favRecord.albums || [],
-      tracks: favRecord.tracks || []
+      artists: favRecord?.artists || [],
+      albums: favRecord?.albums || [],
+      tracks: favRecord?.tracks || []
     };
   }
 

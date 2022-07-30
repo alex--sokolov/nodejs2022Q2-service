@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "npx prisma migrate deploy && nest start --watch",
+    "start:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -23,9 +23,14 @@
     "docker:scan": "docker scan nodejs2022q2-service",
     "docker:scandb": "docker scan nodejs2022q2-postgres",
     "db:dev:rm": "docker compose rm postgres -s -f -v",
+    "app:dev:rm": "docker rm nodejs2022Q2-service -f -v",
+    "db-image:dev:rmi": "docker rmi nodejs2022q2-service_app",
+    "app-image:dev:rmi": "docker rmi nodejs2022q2-service_postgres",
+    "docker:stop:dev":"npm run db:dev:rm && npm run app:dev:rm && docker rmi nodejs2022q2-service_app && docker rmi nodejs2022q2-service_postgres",
+    "docker:stop:c":"npm run db:dev:rm && npm run app:dev:rm",
+    "docker:stop": "docker-compose down --rmi local -v",
     "db:dev:up": "docker compose up postgres -d",
     "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up"
-
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
