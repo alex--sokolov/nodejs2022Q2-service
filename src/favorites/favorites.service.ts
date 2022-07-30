@@ -83,14 +83,20 @@ export class FavoritesService {
   }
 
   async removeAlbumFromFavorites(id: string): Promise<void> {
-    const album = data.albums.find((album) => album.id === id);
-    if (!album) throw new UnprocessableEntityException();
-    console.log('BEFORE', data.favorites.albums);
-    await new Promise((resolve) => {
-      data.favorites.albums.splice(data.favorites.albums.indexOf(id), 1);
-      console.log('AFTER', data.favorites.albums);
-      resolve(true);
+    this.prisma.album.update({
+      where: { id },
+      data: { favoriteId: { set: null } },
     });
+
+
+    // const album = data.albums.find((album) => album.id === id);
+    // if (!album) throw new UnprocessableEntityException();
+    // console.log('BEFORE', data.favorites.albums);
+    // await new Promise((resolve) => {
+    //   data.favorites.albums.splice(data.favorites.albums.indexOf(id), 1);
+    //   console.log('AFTER', data.favorites.albums);
+    //   resolve(true);
+    // });
   }
 
   async addTrackToFavorites(id: string): Promise<string> {
@@ -103,11 +109,16 @@ export class FavoritesService {
   }
 
   async removeTrackFromFavorites(id: string): Promise<void> {
-    const track = data.tracks.find((track) => track.id === id);
-    if (!track) throw new UnprocessableEntityException();
-    await new Promise((resolve) => {
-      data.favorites.tracks.splice(data.favorites.tracks.indexOf(id), 1);
-      resolve(true);
+    this.prisma.track.update({
+      where: { id },
+      data: { favoriteId: { set: null } },
     });
   }
+  //   const track = data.tracks.find((track) => track.id === id);
+  //   if (!track) throw new UnprocessableEntityException();
+  //   await new Promise((resolve) => {
+  //     data.favorites.tracks.splice(data.favorites.tracks.indexOf(id), 1);
+  //     resolve(true);
+  //   });
+  // }
 }

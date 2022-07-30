@@ -28,7 +28,11 @@ export class ArtistsService {
   }
 
   async findAll(): Promise<Artist[]> {
-    return await this.prisma.artist.findMany()
+    try {
+      return await this.prisma.artist.findMany();
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: string): Promise<Artist> {

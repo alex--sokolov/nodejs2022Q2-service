@@ -18,8 +18,12 @@ export class UsersService {
   }
 
   async findAll(): Promise<UserResponseDto[]> {
+    try {
     const users: User[] = await this.prisma.user.findMany()
     return users.map((user) => new UserResponseDto(user));
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: string): Promise<UserResponseDto> {
