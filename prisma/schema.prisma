@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  login     String
+  login     String   @unique
   password  String
   version   Int      @default(1)
   createdAt DateTime @default(now())
@@ -33,8 +33,8 @@ model Album {
   id         String    @id @default(uuid())
   name       String
   year       Int
-  artist     Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
   artistId   String?
+  artist     Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
   tracks     Track[]
   favs       Favorite? @relation(fields: [favoriteId], references: [id], onDelete: SetNull)
   favoriteId String?
@@ -43,11 +43,11 @@ model Album {
 model Track {
   id         String    @id @default(uuid())
   name       String
+  artistId   String?
+  albumId    String?
   duration   Int
   artist     Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
-  artistId   String?
   albums     Album?    @relation(fields: [albumId], references: [id], onDelete: SetNull)
-  albumId    String?
   favs       Favorite? @relation(fields: [favoriteId], references: [id], onDelete: SetNull)
   favoriteId String?
 }

@@ -7,8 +7,8 @@ export class UserResponseDto {
   @Exclude()
   password: string;
   version: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 
   constructor(withoutPass: Omit<UserResponseDto, 'password'>) {
     Object.assign(this, withoutPass);

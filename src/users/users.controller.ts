@@ -13,6 +13,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import {User} from '@prisma/client';
+
 
 @Controller('user')
 export class UsersController {
@@ -27,8 +29,7 @@ export class UsersController {
   async findOne(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<UserResponseDto> {
-    const user = await this.usersService.findOne(id);
-    return user;
+    return await this.usersService.findOne(id);
   }
 
   @Post()
