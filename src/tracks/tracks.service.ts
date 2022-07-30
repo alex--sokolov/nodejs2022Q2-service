@@ -8,12 +8,9 @@ import {CreateTrackDto} from './dto/create-track.dto';
 import {UpdateTrackDto} from './dto/update-track.dto';
 import {ArtistsService} from '../artists/artists.service';
 import {Track} from '../interfaces';
-import {data} from '../data';
-import {v4} from 'uuid';
 import {trackErrors} from './tracks.errors';
 import {AlbumsService} from '../albums/albums.service';
 import {FavoritesService} from '../favorites/favorites.service';
-import {artistErrors} from '../artists/artists.errors';
 import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
@@ -88,22 +85,4 @@ export class TracksService {
       throw error;
     }
   }
-  //   const tracks = await this.findAll();
-  //   const trackToRemove = await this.findOne(id);
-  //   if (!trackToRemove) {
-  //     throw new NotFoundException(artistErrors.NOT_FOUND);
-  //   }
-  //   await new Promise((resolve) => {
-  //     data.tracks = tracks.filter((album) => album.id !== id);
-  //     resolve(true);
-  //   });
-  //
-  //   await new Promise((resolve) => {
-  //     const a = data.favorites.tracks.indexOf(id);
-  //     if (a >= 0) {
-  //       data.favorites.tracks.splice(a, 1);
-  //     }
-  //     resolve(true);
-  //   });
-  // }
 }

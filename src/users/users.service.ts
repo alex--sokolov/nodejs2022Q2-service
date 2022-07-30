@@ -40,8 +40,13 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     try {
+      const date:Date = new Date();
       const user = await this.prisma.user.create({
-        data: createUserDto
+        data: {
+          ...createUserDto,
+          createdAt : date,
+          updatedAt : date
+        }
       });
       return new UserResponseDto(user);
     } catch (error) {

@@ -7,8 +7,6 @@ import {
 import {ArtistsService} from '../artists/artists.service';
 import {AlbumsService} from '../albums/albums.service';
 import {TracksService} from '../tracks/tracks.service';
-import {data} from '../data';
-import {Favorites} from '../interfaces';
 import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
