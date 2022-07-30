@@ -41,12 +41,6 @@ export class UsersService {
       });
       return new UserResponseDto(user);
     } catch (error) {
-    // } catch (error) {
-    //   if (error instanceof PrismaClientKnownRequestError) {
-    //     if (error.code === 'P2002') {
-    //       throw new ForbiddenException(userErrors.LOGIN_ALREADY_EXISTS);
-    //     }
-    //   }
       throw error;
     }
   }

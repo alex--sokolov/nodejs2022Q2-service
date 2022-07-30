@@ -1,6 +1,5 @@
 export const userErrors = {
   NOT_FOUND: 'User not found',
   INCORRECT_OLD_PASSWORD: 'Incorrect old password provided',
-  SAME_PASSWORD: 'You have provided the same password',
-  LOGIN_ALREADY_EXISTS: 'Login is already taken'
+  SAME_PASSWORD: 'You have provided the same password'
 };
