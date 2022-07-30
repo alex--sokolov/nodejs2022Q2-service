@@ -41,11 +41,12 @@ export class UsersService {
       });
       return new UserResponseDto(user);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException(userErrors.LOGIN_ALREADY_EXISTS);
-        }
-      }
+    // } catch (error) {
+    //   if (error instanceof PrismaClientKnownRequestError) {
+    //     if (error.code === 'P2002') {
+    //       throw new ForbiddenException(userErrors.LOGIN_ALREADY_EXISTS);
+    //     }
+    //   }
       throw error;
     }
   }
@@ -85,7 +86,7 @@ export class UsersService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
-          throw new ForbiddenException(userErrors.NOT_FOUND);
+          throw new NotFoundException(userErrors.NOT_FOUND);
         }
       }
       throw error;
