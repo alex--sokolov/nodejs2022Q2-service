@@ -20,6 +20,10 @@ npm i
 ```
 
 ```bash
+change .env-example to .env
+```
+
+```bash
 npm run docker:start
 ```
 
