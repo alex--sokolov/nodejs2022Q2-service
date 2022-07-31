@@ -5,9 +5,9 @@ import {
   Body,
   Param,
   Delete,
-  ParseUUIDPipe,
   Put,
   HttpCode,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { Track } from '../interfaces';

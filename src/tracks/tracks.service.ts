@@ -1,109 +1,78 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
-import { ArtistsService } from '../artists/artists.service';
-import { Track } from '../interfaces';
-import { data } from '../data';
-import { v4 } from 'uuid';
-import { trackErrors } from './tracks.errors';
-import { AlbumsService } from '../albums/albums.service';
-import { FavoritesService } from '../favorites/favorites.service';
-import { artistErrors } from '../artists/artists.errors';
+import {CreateTrackDto} from './dto/create-track.dto';
+import {UpdateTrackDto} from './dto/update-track.dto';
+import {Track} from '../interfaces';
+import {trackErrors} from './tracks.errors';
+import {FavoritesService} from '../favorites/favorites.service';
+import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
 export class TracksService {
   constructor(
-    @Inject(forwardRef(() => ArtistsService))
-    private readonly artistsService: ArtistsService,
-    @Inject(forwardRef(() => AlbumsService))
-    private readonly albumsService: AlbumsService,
-    @Inject(forwardRef(() => FavoritesService))
-    private readonly favoritesService: FavoritesService,
-  ) {}
+    private prisma: PrismaService,
+    private favoritesService: FavoritesService,
+  ) {
+  }
 
   async findAll(): Promise<Track[]> {
-    return await new Promise((resolve) => {
-      resolve(data.tracks);
-    });
+    try {
+      return await this.prisma.track.findMany();
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: string): Promise<Track> {
-    const track: Track = await new Promise((resolve) => {
-      resolve(data.tracks.find((track) => track.id === id));
-    });
-    if (!track) {
-      throw new NotFoundException(trackErrors.NOT_FOUND);
+    try {
+      const track = await this.prisma.track.findFirst({where: {id}});
+      if (!track) {
+        throw new NotFoundException(trackErrors.NOT_FOUND);
+      }
+      return track;
+    } catch (error) {
+      throw error;
     }
-    return track;
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
-    if (createTrackDto.artistId) {
-      await this.artistsService.findOne(createTrackDto.artistId);
+    try {
+      const track = await this.prisma.track.create({
+        data: createTrackDto
+      });
+      return track;
+    } catch (error) {
+      throw error;
     }
-    if (createTrackDto.albumId) {
-      await this.albumsService.findOne(createTrackDto.albumId);
-    }
-    return await new Promise((resolve) => {
-      const newTrack = {
-        id: v4(),
-        ...createTrackDto,
-      };
-      data.tracks.push(newTrack);
-      resolve(newTrack);
-    });
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
-    const track = await this.findOne(id);
-
-    if (!track) {
-      throw new NotFoundException(trackErrors.NOT_FOUND);
+    try {
+      const track = await this.prisma.track.findFirst({where: {id}});
+      if (!track) {
+        throw new NotFoundException(trackErrors.NOT_FOUND);
+      }
+      return await this.prisma.track.update({
+        where: {id},
+        data: {...updateTrackDto},
+      });
+    } catch (error) {
+      throw error;
     }
-
-    if (updateTrackDto.artistId) {
-      await this.artistsService.findOne(updateTrackDto.artistId);
-    }
-
-    if (updateTrackDto.albumId) {
-      await this.albumsService.findOne(updateTrackDto.albumId);
-    }
-
-    const newTrack = {
-      ...track,
-      ...updateTrackDto,
-    };
-
-    return await new Promise((resolve) => {
-      data.tracks = data.tracks.map((track) =>
-        track.id === id ? newTrack : track,
-      );
-      resolve(newTrack);
-    });
   }
 
   async remove(id: string): Promise<void> {
-    const tracks = await this.findAll();
-    const trackToRemove = await this.findOne(id);
-    if (!trackToRemove) {
-      throw new NotFoundException(artistErrors.NOT_FOUND);
-    }
-    await new Promise((resolve) => {
-      data.tracks = tracks.filter((album) => album.id !== id);
-      resolve(true);
-    });
-
-    await new Promise((resolve) => {
-      const a = data.favorites.tracks.indexOf(id);
-      if (a >= 0) {
-        data.favorites.tracks.splice(a, 1);
+    try {
+      const track = await this.prisma.track.findFirst({where: {id}});
+      if (!track) {
+        throw new NotFoundException(trackErrors.NOT_FOUND);
       }
-      resolve(true);
-    });
+      await this.favoritesService.removeTrackFromFavorites(id)
+      await this.prisma.track.delete({where: {id}});
+    } catch (error) {
+      throw error;
+    }
   }
 }

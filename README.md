@@ -1,5 +1,46 @@
 # Home Library Service
 NestJS, REST API
+
+## Your steps in checking this task (Prisma):
+
+```bash
+git clone https://github.com/alex--sokolov/nodejs20222-service.git
+```
+
+```bash
+cd nodejs2022Q2-service
+```
+
+```bash
+git checkout orm
+```
+
+```bash
+npm i
+```
+
+```bash
+change .env-example to .env
+```
+
+```bash
+npm run docker:start
+```
+
+```bash
+npm run test
+```
+
+```bash
+npm run docker:stop
+```
+
+# Thank you for assessment and have a good one!
+
+___
+
+##Common info
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -20,15 +61,19 @@ cd nodejs2022Q2-service
 ## Change branch
 
 ```bash
-git checkout docker
+git checkout orm
 ```
 
-## Docker
+## Prisma
 
 Build images and start containers:
 
 ```bash
 npm run docker:start
+```
+
+```bash
+npm run docker:stop
 ```
 
 Scan app image for vulnerabilities:
