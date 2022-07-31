@@ -4,7 +4,7 @@ NestJS, REST API
 ## Your steps in checking this task (Prisma):
 
 ```bash
-git clone https://github.com/alex--sokolov/nodejs2022Q2-service
+git clone https://github.com/alex--sokolov/nodejs20222-service.git
 ```
 
 ```bash
