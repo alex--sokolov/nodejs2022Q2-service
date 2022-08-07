@@ -3,14 +3,14 @@ import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto";
 import { Tokens } from './types';
 import { AuthGuard } from "@nestjs/passport";
-import { UserResponseDto, UserResponseDtoWithHash } from "../users/dto/user-response.dto";
 
-interface IGetUserAuthInfoRequest extends Request {
+interface TokenInfo extends Request {
   user: {
     sub: string,
     login: string,
     iat: number,
     exp: number,
+    refreshToken?: string,
   }
 }
 
@@ -34,16 +34,16 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('logout')
-  async logout(@Req() req: IGetUserAuthInfoRequest) {
+  async logout(@Req() req: TokenInfo) {
     const user = req.user;
-    console.log('user', user);
-    return await this.authService.logout(user.sub);
+    return await this.authService.logout(user['sub']);
   }
 
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh() {
-    return await this.authService.refreshTokens();
+  async refresh(@Req() req: TokenInfo) {
+    const user = req.user;
+    return await this.authService.refreshTokens(user['sub'], user['refreshToken']);
   }
 }
