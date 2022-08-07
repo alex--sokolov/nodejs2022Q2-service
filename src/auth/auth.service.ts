@@ -47,8 +47,8 @@ export class AuthService {
     const hash = await this.hashData(refreshToken);
 
     await this.prisma.user.update({
-      where: { id: userId },
-      data: { hashedRt: hash },
+      where: {id: userId},
+      data: {hashedRt: hash},
     });
   }
 
@@ -73,19 +73,27 @@ export class AuthService {
 
   async login(auth: AuthDto): Promise<Tokens> {
     const user = await this.userService.findOneByLogin(auth.login);
-    console.log(user);
     if (!user) throw new ForbiddenException("Access denied");
     const passwordMatches = await bcrypt.compare(auth.password, user.password)
     if (!passwordMatches) throw new ForbiddenException("Access denied");
-
     const tokens = await this.getTokens(user.id, user.login);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
-
   }
 
-  async logout() {
-
+  async logout(userId: string) {
+    console.log('userId', userId);
+    await this.prisma.user.updateMany({
+      where: {
+        id: userId,
+        hashedRt: {
+          not: null,
+        },
+      },
+      data: {
+        hashedRt: null
+      }
+    })
   }
 
   async refreshTokens() {
