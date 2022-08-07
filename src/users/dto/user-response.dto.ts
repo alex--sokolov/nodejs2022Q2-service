@@ -4,7 +4,6 @@ export class UserResponseDtoWithHash {
   id: string;
   login: string;
   password: string;
-  @Exclude()
   version: number;
 
   @Transform(({ value }) => new Date(value).getTime())

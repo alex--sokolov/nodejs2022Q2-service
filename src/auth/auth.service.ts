@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   async getTokens(userId: string, login: string): Promise<Tokens> {
-    const [access_token, refresh_token] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync({
         sub: userId,
         login
@@ -40,7 +40,7 @@ export class AuthService {
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       })
     ]);
-    return {access_token, refresh_token};
+    return {accessToken, refreshToken};
   }
 
   async updateRtHash(userId: string, refreshToken: string): Promise<void> {
@@ -67,7 +67,7 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(newUser.id, newUser.login);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
+    await this.updateRtHash(newUser.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -77,7 +77,7 @@ export class AuthService {
     const passwordMatches = await bcrypt.compare(auth.password, user.password)
     if (!passwordMatches) throw new ForbiddenException("Access denied");
     const tokens = await this.getTokens(user.id, user.login);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -102,8 +102,6 @@ export class AuthService {
         id: userId,
       }
     });
-    console.log('user', user);
-    console.log('rt',rt);
 
     if (!user || !user.hashedRt) throw new ForbiddenException("Access denied");
 
@@ -111,7 +109,7 @@ export class AuthService {
     if (!rtMatches) throw new ForbiddenException("Access denied");
 
     const tokens = await this.getTokens(user.id, user.login);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 }

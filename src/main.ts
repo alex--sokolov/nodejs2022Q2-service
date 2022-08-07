@@ -7,6 +7,7 @@ import { dirname, join, resolve } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { cwd } from 'process';
 import * as dotenv from 'dotenv';
+import { AtGuard } from "./common/guards";
 
 dotenv.config({ path: resolve(cwd(), '.env') });
 const port = process.env.PORT || 4000;
@@ -23,6 +24,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // const reflector = new Reflector();
+  // app.useGlobalGuards(new AtGuard(reflector));
   await app.listen(port).then(() => console.log('Server started at ', port));
 }
 bootstrap();
