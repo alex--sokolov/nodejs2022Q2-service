@@ -7,7 +7,6 @@ import { dirname, join, resolve } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { cwd } from 'process';
 import * as dotenv from 'dotenv';
-import { AtGuard } from "./common/guards";
 
 dotenv.config({ path: resolve(cwd(), '.env') });
 const port = process.env.PORT || 4000;

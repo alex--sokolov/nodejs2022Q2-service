@@ -1,23 +1,17 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from '../interfaces';
 import { albumErrors } from './albums.errors';
 import { FavoritesService } from '../favorites/favorites.service';
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AlbumsService {
   constructor(
     private prisma: PrismaService,
     private favoritesService: FavoritesService,
-  ) {
-  }
+  ) {}
 
   async findAll(): Promise<Album[]> {
     try {
@@ -29,7 +23,7 @@ export class AlbumsService {
 
   async findOne(id: string): Promise<Album> {
     try {
-      const album = await this.prisma.album.findFirst({where: {id}});
+      const album = await this.prisma.album.findFirst({ where: { id } });
       if (!album) {
         throw new NotFoundException(albumErrors.NOT_FOUND);
       }
@@ -42,7 +36,7 @@ export class AlbumsService {
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     try {
       const album = await this.prisma.album.create({
-        data: createAlbumDto
+        data: createAlbumDto,
       });
       return album;
     } catch (error) {
@@ -52,13 +46,13 @@ export class AlbumsService {
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
     try {
-      const album = await this.prisma.album.findFirst({where: {id}});
+      const album = await this.prisma.album.findFirst({ where: { id } });
       if (!album) {
         throw new NotFoundException(albumErrors.NOT_FOUND);
       }
       return await this.prisma.album.update({
-        where: {id},
-        data: {...updateAlbumDto},
+        where: { id },
+        data: { ...updateAlbumDto },
       });
     } catch (error) {
       throw error;
@@ -67,12 +61,12 @@ export class AlbumsService {
 
   async remove(id: string): Promise<void> {
     try {
-      const album = await this.prisma.album.findFirst({where: {id}});
+      const album = await this.prisma.album.findFirst({ where: { id } });
       if (!album) {
         throw new NotFoundException(albumErrors.NOT_FOUND);
       }
-      await this.favoritesService.removeAlbumFromFavorites(id)
-      await this.prisma.album.delete({where: {id}});
+      await this.favoritesService.removeAlbumFromFavorites(id);
+      await this.prisma.album.delete({ where: { id } });
     } catch (error) {
       throw error;
     }

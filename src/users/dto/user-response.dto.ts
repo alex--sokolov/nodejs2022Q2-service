@@ -1,4 +1,4 @@
-import {Exclude, Transform} from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 
 export class UserResponseDtoWithHash {
   id: string;
@@ -14,7 +14,6 @@ export class UserResponseDtoWithHash {
 }
 
 export class UserResponseDto extends UserResponseDtoWithHash {
-
   @Exclude()
   password: string;
 

@@ -1,15 +1,20 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { AuthService } from "./auth.service";
-import { AuthDto } from "./dto";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthDto } from './dto';
 import { Tokens } from './types';
-import { AtGuard, RtGuard } from "../common/guards";
-import { GetCurrentUser, Public } from "../common/decorators";
+import { RtGuard } from '../common/guards';
+import { GetCurrentUser, Public } from '../common/decorators';
 
 @Controller('auth')
 export class AuthController {
-
-  constructor(private readonly authService: AuthService) {
-  }
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('signup')
@@ -37,7 +42,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refresh(
     @GetCurrentUser('refreshToken') refreshToken: string,
-    @GetCurrentUser('sub') userId: string
+    @GetCurrentUser('sub') userId: string,
   ) {
     return await this.authService.refreshTokens(userId, refreshToken);
   }

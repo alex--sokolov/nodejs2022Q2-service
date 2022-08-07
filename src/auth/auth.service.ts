@@ -1,21 +1,19 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from "../prisma/prisma.service";
-import { v4 } from "uuid";
+import { PrismaService } from '../prisma/prisma.service';
+import { v4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { AuthDto } from "./dto";
-import { Tokens } from "./types";
-import { JwtService } from "@nestjs/jwt";
-import { UsersService } from "../users/users.service";
+import { AuthDto } from './dto';
+import { Tokens } from './types';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private userService: UsersService
-  ) {
-  }
+    private userService: UsersService,
+  ) {}
 
   async hashData(data: string) {
     const salt = await bcrypt.genSalt(+process.env.CRYPT_SALT);
@@ -24,31 +22,36 @@ export class AuthService {
 
   async getTokens(userId: string, login: string): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync({
-        sub: userId,
-        login
-      }, {
-        secret: process.env.JWT_SECRET_KEY,
-        expiresIn: process.env.TOKEN_EXPIRE_TIME,
-
-      }),
-      this.jwtService.signAsync({
-        sub: userId,
-        login
-      }, {
-        secret: process.env.JWT_SECRET_REFRESH_KEY,
-        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-      })
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          login,
+        },
+        {
+          secret: process.env.JWT_SECRET_KEY,
+          expiresIn: process.env.TOKEN_EXPIRE_TIME,
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          login,
+        },
+        {
+          secret: process.env.JWT_SECRET_REFRESH_KEY,
+          expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+        },
+      ),
     ]);
-    return {accessToken, refreshToken};
+    return { accessToken, refreshToken };
   }
 
   async updateRtHash(userId: string, refreshToken: string): Promise<void> {
     const hash = await this.hashData(refreshToken);
 
     await this.prisma.user.update({
-      where: {id: userId},
-      data: {hashedRt: hash},
+      where: { id: userId },
+      data: { hashedRt: hash },
     });
   }
 
@@ -73,9 +76,9 @@ export class AuthService {
 
   async login(auth: AuthDto): Promise<Tokens> {
     const user = await this.userService.findOneByLogin(auth.login);
-    if (!user) throw new ForbiddenException("Access denied");
-    const passwordMatches = await bcrypt.compare(auth.password, user.password)
-    if (!passwordMatches) throw new ForbiddenException("Access denied");
+    if (!user) throw new ForbiddenException('Access denied');
+    const passwordMatches = await bcrypt.compare(auth.password, user.password);
+    if (!passwordMatches) throw new ForbiddenException('Access denied');
     const tokens = await this.getTokens(user.id, user.login);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
@@ -91,22 +94,22 @@ export class AuthService {
         },
       },
       data: {
-        hashedRt: null
-      }
-    })
+        hashedRt: null,
+      },
+    });
   }
 
   async refreshTokens(userId: string, rt: string) {
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
-      }
+      },
     });
 
-    if (!user || !user.hashedRt) throw new ForbiddenException("Access denied");
+    if (!user || !user.hashedRt) throw new ForbiddenException('Access denied');
 
     const rtMatches = await bcrypt.compare(rt, user.hashedRt);
-    if (!rtMatches) throw new ForbiddenException("Access denied");
+    if (!rtMatches) throw new ForbiddenException('Access denied');
 
     const tokens = await this.getTokens(user.id, user.login);
     await this.updateRtHash(user.id, tokens.refreshToken);
