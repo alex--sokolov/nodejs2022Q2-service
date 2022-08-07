@@ -12,7 +12,7 @@ cd nodejs2022Q2-service
 ```
 
 ```bash
-git checkout orm
+git checkout auth
 ```
 
 ```bash
@@ -28,7 +28,7 @@ npm run docker:start
 ```
 
 ```bash
-npm run test
+npm run test:auth
 ```
 
 ```bash
