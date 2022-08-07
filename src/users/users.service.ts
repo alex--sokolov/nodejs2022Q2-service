@@ -6,7 +6,7 @@ import {
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/user-response.dto';
+import { UserResponseDto, UserResponseDtoWithHash } from './dto/user-response.dto';
 import { userErrors } from './users.errors';
 import { PrismaService } from "../prisma/prisma.service";
 import { User } from "@prisma/client";
@@ -26,7 +26,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string): Promise<UserResponseDto> {
+  async findOneById(id: string): Promise<UserResponseDto> {
     try {
       const user = await this.prisma.user.findFirst({where: {id}});
       if (!user) {
@@ -37,6 +37,19 @@ export class UsersService {
       throw error;
     }
   }
+
+  async findOneByLogin(login: string): Promise<UserResponseDtoWithHash> {
+    try {
+      const user = await this.prisma.user.findFirst({where: {login}});
+      if (!user) {
+        throw new NotFoundException(userErrors.NOT_FOUND);
+      }
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     try {

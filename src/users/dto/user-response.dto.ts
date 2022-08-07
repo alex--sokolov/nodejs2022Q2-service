@@ -1,11 +1,10 @@
 import {Exclude, Transform} from 'class-transformer';
 
-export class UserResponseDto {
+export class UserResponseDtoWithHash {
   id: string;
   login: string;
-
-  @Exclude()
   password: string;
+  @Exclude()
   version: number;
 
   @Transform(({ value }) => new Date(value).getTime())
@@ -13,8 +12,15 @@ export class UserResponseDto {
 
   @Transform(({ value }) => new Date(value).getTime())
   updatedAt: Date;
+}
+
+export class UserResponseDto extends UserResponseDtoWithHash {
+
+  @Exclude()
+  password: string;
 
   constructor(withoutPass: Omit<UserResponseDto, 'password'>) {
+    super();
     Object.assign(this, withoutPass);
   }
 }

@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from "../prisma/prisma.service";
 import { v4 } from "uuid";
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from "./dto";
 import { Tokens } from "./types";
 import { JwtService } from "@nestjs/jwt";
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class AuthService {
 
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private userService: UsersService
   ) {
   }
 
@@ -69,7 +71,16 @@ export class AuthService {
     return tokens;
   }
 
-  async login() {
+  async login(auth: AuthDto): Promise<Tokens> {
+    const user = await this.userService.findOneByLogin(auth.login);
+    console.log(user);
+    if (!user) throw new ForbiddenException("Access denied");
+    const passwordMatches = await bcrypt.compare(auth.password, user.password)
+    if (!passwordMatches) throw new ForbiddenException("Access denied");
+
+    const tokens = await this.getTokens(user.id, user.login);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return tokens;
 
   }
 

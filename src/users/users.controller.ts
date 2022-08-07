@@ -27,7 +27,7 @@ export class UsersController {
   async findOne(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<UserResponseDto> {
-    return await this.usersService.findOne(id);
+    return await this.usersService.findOneById(id);
   }
 
   @Post()
