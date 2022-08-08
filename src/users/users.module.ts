@@ -12,7 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
-    PrismaService
+    PrismaService,
   ],
 })
 export class UsersModule {}

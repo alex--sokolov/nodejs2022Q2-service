@@ -23,6 +23,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // const reflector = new Reflector();
+  // app.useGlobalGuards(new AtGuard(reflector));
   await app.listen(port).then(() => console.log('Server started at ', port));
 }
 bootstrap();
